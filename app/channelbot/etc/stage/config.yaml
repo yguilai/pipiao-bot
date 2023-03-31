@@ -1,0 +1,5 @@
+Bot:
+  AppId: 0
+  Token: ''
+  SecretKey: ''
+  Timeout: 3
