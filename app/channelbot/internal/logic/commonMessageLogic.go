@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/tencent-connect/botgo/dto"
-	"github.com/yguilai/pipiao-bot/app/transport/internal/svc"
+	"github.com/yguilai/pipiao-bot/app/channelbot/internal/svc"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -26,5 +26,9 @@ func (l *MessageLogic) Handle(_ *dto.WSPayload, data *dto.Message) error {
 	if err != nil {
 		return err
 	}
-	return producer.Publish(l.svcCtx.Config.Nsq.Topic, msgBytes)
+	err = producer.Publish(l.svcCtx.Config.Nsq.Topic, msgBytes)
+	if err != nil {
+		logx.Error(err)
+	}
+	return err
 }
