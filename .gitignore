@@ -1,3 +1,5 @@
 .idea/
 .vscode/
 **/etc/dev/
+
+build/deps/data/

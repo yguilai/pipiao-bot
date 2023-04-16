@@ -2,16 +2,16 @@ package commands
 
 import (
 	datastructure "github.com/duke-git/lancet/v2/datastructure/set"
-	"github.com/yguilai/pipiao-bot/app/core/cmdset"
+	"github.com/yguilai/pipiao-bot/app/channelbot/internal/cmdset"
 )
 
 func RegisterCommands() *cmdset.CommandContainer {
 	cc := cmdset.NewCommandContainer()
 
 	cycleCmd := &cmdset.BotCommand{
-		Use:         "/平原",
-		SubRestrain: datastructure.NewSet("地球", "金星", "火卫二"),
-		RunE:        CycleCommandHandler,
+		Use:         "/状态",
+		SubRestrain: datastructure.NewSet("地球", "金星", "火卫二", "希图斯", "扎里曼"),
+		RunE:        NewCycleCmdLogic,
 	}
 
 	alertsCmd := &cmdset.BotCommand{

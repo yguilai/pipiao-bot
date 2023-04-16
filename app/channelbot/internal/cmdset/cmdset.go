@@ -3,6 +3,7 @@ package cmdset
 import (
 	datastructure "github.com/duke-git/lancet/v2/datastructure/set"
 	"github.com/tencent-connect/botgo/dto"
+	"github.com/yguilai/pipiao-bot/app/channelbot/internal/svc"
 	"sync"
 )
 
@@ -16,7 +17,7 @@ type (
 		Use         string                 `json:"use"`
 		Subs        map[string]*BotCommand `json:"subs"`
 		SubRestrain datastructure.Set[string]
-		RunE        Handler
+		RunE        func(svcCtx *svc.ServiceContext) CommandHandler
 	}
 
 	CommandContext struct {
@@ -27,7 +28,9 @@ type (
 		Msg *dto.Message
 	}
 
-	Handler func(ctx *CommandContext) (string, error)
+	CommandHandler interface {
+		Handle(ctx *CommandContext) (string, error)
+	}
 )
 
 const wildcard = "*"

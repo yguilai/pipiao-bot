@@ -14,7 +14,7 @@ func RegisterNsqConsumer(svcCtx *svc.ServiceContext) error {
 	if err != nil {
 		return err
 	}
-	consumer.AddConcurrentHandlers(consumer2.NewMessageConsumer(svcCtx.CmdContainer, svcCtx.Api), 5)
+	consumer.AddConcurrentHandlers(consumer2.NewMessageConsumer(svcCtx), 5)
 	proc.AddShutdownListener(func() {
 		consumer.Stop()
 	})

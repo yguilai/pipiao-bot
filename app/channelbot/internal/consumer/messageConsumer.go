@@ -7,18 +7,26 @@ import (
 	"github.com/nsqio/go-nsq"
 	"github.com/tencent-connect/botgo/dto"
 	"github.com/tencent-connect/botgo/openapi"
-	"github.com/yguilai/pipiao-bot/app/core/cmdset"
+	"github.com/yguilai/pipiao-bot/app/channelbot/internal/cmdset"
+	"github.com/yguilai/pipiao-bot/app/channelbot/internal/svc"
+	"github.com/zeromicro/go-zero/core/logx"
+	"sync"
 )
 
 type MessageConsumer struct {
-	c   *cmdset.CommandContainer
-	api openapi.OpenAPI
+	c      *cmdset.CommandContainer
+	api    openapi.OpenAPI
+	svcCtx *svc.ServiceContext
+
+	cmdCache map[string]cmdset.CommandHandler
+	cmdLock  sync.Mutex
 }
 
-func NewMessageConsumer(container *cmdset.CommandContainer, api openapi.OpenAPI) *MessageConsumer {
+func NewMessageConsumer(svcCtx *svc.ServiceContext) *MessageConsumer {
 	return &MessageConsumer{
-		c:   container,
-		api: api,
+		c:      svcCtx.CmdContainer,
+		api:    svcCtx.Api,
+		svcCtx: svcCtx,
 	}
 }
 
@@ -32,7 +40,7 @@ func (c *MessageConsumer) HandleMessage(nsqMsg *nsq.Message) error {
 
 	if err != nil {
 		if errors.Is(err, cmdset.ErrCmdFormat) {
-			return replyMsg(c.api, &qqMsg, "暂不支持该指令")
+			return c.replyMsg(&qqMsg, "暂不支持该指令")
 		}
 		return err
 	}
@@ -42,21 +50,35 @@ func (c *MessageConsumer) HandleMessage(nsqMsg *nsq.Message) error {
 		arg = commands[1]
 	}
 	if realCommand.RunE == nil {
-		return replyMsg(c.api, &qqMsg, "该指令还在开发中")
+		return c.replyMsg(&qqMsg, "该指令还在开发中")
 	}
-	replyContent, err := realCommand.RunE(&cmdset.CommandContext{
+
+	handler := c.loadCommandHandler(realCommand)
+	replyContent, err := handler.Handle(&cmdset.CommandContext{
 		Cmds: commands,
 		Arg:  arg,
 		Msg:  &qqMsg,
 		Cmd:  realCommand,
 	})
 	if err != nil {
-		return err
+		logx.Error(err)
+		return c.replyMsg(&qqMsg, "指令处理出错")
 	}
-	return replyMsg(c.api, &qqMsg, replyContent)
+	return c.replyMsg(&qqMsg, replyContent)
 }
 
-func replyMsg(api openapi.OpenAPI, msg *dto.Message, content string) error {
+func (c *MessageConsumer) loadCommandHandler(cmd *cmdset.BotCommand) cmdset.CommandHandler {
+	c.cmdLock.Lock()
+	defer c.cmdLock.Unlock()
+	if handler, ok := c.cmdCache[cmd.Use]; ok {
+		return handler
+	}
+	handler := cmd.RunE(c.svcCtx)
+	c.cmdCache[cmd.Use] = handler
+	return handler
+}
+
+func (c *MessageConsumer) replyMsg(msg *dto.Message, content string) error {
 	ctx := context.Background()
 	replyMessage := &dto.MessageToCreate{
 		Content: content,
@@ -66,16 +88,16 @@ func replyMsg(api openapi.OpenAPI, msg *dto.Message, content string) error {
 		},
 	}
 	if msg.DirectMessage {
-		directMessage, err := api.CreateDirectMessage(ctx, &dto.DirectMessageToCreate{
+		directMessage, err := c.api.CreateDirectMessage(ctx, &dto.DirectMessageToCreate{
 			SourceGuildID: msg.SrcGuildID,
 			RecipientID:   msg.Author.ID,
 		})
 		if err != nil {
 			return err
 		}
-		_, err = api.PostDirectMessage(ctx, directMessage, replyMessage)
+		_, err = c.api.PostDirectMessage(ctx, directMessage, replyMessage)
 		return err
 	}
-	_, err := api.PostMessage(context.Background(), msg.ChannelID, replyMessage)
+	_, err := c.api.PostMessage(context.Background(), msg.ChannelID, replyMessage)
 	return err
 }
