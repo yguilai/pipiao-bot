@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/yguilai/pipiao-bot/app/core/conf"
+	"github.com/yguilai/pipiao-bot/core/conf"
 )
 
 type Config struct {

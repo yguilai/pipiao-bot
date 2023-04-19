@@ -8,6 +8,7 @@ import (
 	"github.com/tencent-connect/botgo/dto"
 	"github.com/tencent-connect/botgo/openapi"
 	"github.com/yguilai/pipiao-bot/app/channelbot/internal/cmdset"
+	"github.com/yguilai/pipiao-bot/app/channelbot/internal/logic/commands"
 	"github.com/yguilai/pipiao-bot/app/channelbot/internal/svc"
 	"github.com/zeromicro/go-zero/core/logx"
 	"sync"
@@ -24,7 +25,7 @@ type MessageConsumer struct {
 
 func NewMessageConsumer(svcCtx *svc.ServiceContext) *MessageConsumer {
 	return &MessageConsumer{
-		c:      svcCtx.CmdContainer,
+		c:      commands.RegisterCommands(),
 		api:    svcCtx.Api,
 		svcCtx: svcCtx,
 	}
@@ -36,7 +37,7 @@ func (c *MessageConsumer) HandleMessage(nsqMsg *nsq.Message) error {
 	if err != nil {
 		return err
 	}
-	commands, err := cmdset.Message2Commands(qqMsg.Content)
+	cmds, err := cmdset.Message2Commands(qqMsg.Content)
 
 	if err != nil {
 		if errors.Is(err, cmdset.ErrCmdFormat) {
@@ -44,10 +45,10 @@ func (c *MessageConsumer) HandleMessage(nsqMsg *nsq.Message) error {
 		}
 		return err
 	}
-	realCommand := c.c.MatchHandler(commands)
+	realCommand := c.c.MatchHandler(cmds)
 	arg := ""
 	if realCommand.SubRestrain != nil {
-		arg = commands[1]
+		arg = cmds[1]
 	}
 	if realCommand.RunE == nil {
 		return c.replyMsg(&qqMsg, "该指令还在开发中")
@@ -55,7 +56,7 @@ func (c *MessageConsumer) HandleMessage(nsqMsg *nsq.Message) error {
 
 	handler := c.loadCommandHandler(realCommand)
 	replyContent, err := handler.Handle(&cmdset.CommandContext{
-		Cmds: commands,
+		Cmds: cmds,
 		Arg:  arg,
 		Msg:  &qqMsg,
 		Cmd:  realCommand,

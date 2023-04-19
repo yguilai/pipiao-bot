@@ -1,14 +1,25 @@
 version: '3'
+
+networks:
+  pipiao_network:
+    driver: bridge
+
 services:
   nsqlookupd:
-    image: nsqio/nsq
+    hostname: nsqlookupd
+    container_name: nsqlookupd
+    image: nsqio/nsq:latest
     command: /nsqlookupd
+    networks:
+      - pipiao_network
     ports:
       - "4160:4160"
       - "4161:4161"
 
   nsqd:
-    image: nsqio/nsq
+    hostname: nsqd
+    container_name: nsqd
+    image: nsqio/nsq:latest
     command: /nsqd --lookupd-tcp-address=nsqlookupd:4160
     depends_on:
       - nsqlookupd
@@ -17,25 +28,18 @@ services:
       - "4151:4151"
 
   nsqadmin:
-    image: nsqio/nsq
+    hostname: nsqadmin
+    container_name: nsqadmin
+    image: nsqio/nsq:latest
     command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
     depends_on:
       - nsqlookupd
     ports:
       - "4171:4171"
 
-  mongodb:
-    image: mongo
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=root
-    volumes:
-      - ./data/mongo:/data/db
-
   redis-dev:
+    hostname: redis
+    container_name: redis
     image: redis:7.0.10
     command: redis-server /etc/redis.conf    #启动redis命令
     volumes:
