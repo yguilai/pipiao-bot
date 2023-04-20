@@ -22,7 +22,7 @@ type BotServer struct {
 func NewBotServer(logger log.Logger, eh *hdl.EventHandler, c *conf.Data) *BotServer {
 	return &BotServer{
 		sm:     botgo.NewSessionManager(),
-		Helper: log.NewHelper(log.With(logger, consts.ModuleKey, "server.botserver")),
+		Helper: log.NewHelper(log.With(logger, consts.ModuleKey, "transport.server.botserver")),
 		eh:     eh,
 		c:      c,
 	}

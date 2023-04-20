@@ -21,7 +21,7 @@ func NewMessageForwardService(logger log.Logger, c *conf.Data) *MessageForwardSe
 		panic(err)
 	}
 	return &MessageForwardService{
-		logger:   log.NewHelper(log.With(logger, consts.ModuleKey, "Service.MessageForward")),
+		logger:   log.NewHelper(log.With(logger, consts.ModuleKey, "transport.service.messageforward")),
 		c:        c,
 		producer: producer,
 	}

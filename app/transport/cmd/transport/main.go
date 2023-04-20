@@ -52,7 +52,9 @@ func main() {
 		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 	)
-	c := configcenter.NewConfigCenter(flagconf, configcenter.WithKey(Name))
+	c := configcenter.NewConfigCenter(flagconf, Name)
+	defer c.Close()
+
 	var bc conf.Bootstrap
 	if err := c.Scan(&bc); err != nil {
 		panic(err)

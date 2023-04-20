@@ -18,7 +18,7 @@ type EtcdConfig struct {
 	} `json:"etcd"`
 }
 
-func NewConfigCenter(flagconf, key string) config.Config {
+func NewConfigCenter(flagconf, serverName string) config.Config {
 	c := config.New(
 		config.WithSource(
 			file.NewSource(flagconf),
@@ -33,7 +33,7 @@ func NewConfigCenter(flagconf, key string) config.Config {
 	if err := c.Scan(&etcdconfig); err != nil {
 		panic(err)
 	}
-	return newConfigInstance(&etcdconfig, key)
+	return newConfigInstance(&etcdconfig, withKey(serverName))
 }
 
 func newConfigInstance(etcdconfig *EtcdConfig, key string) config.Config {
@@ -62,6 +62,6 @@ func newConfigInstance(etcdconfig *EtcdConfig, key string) config.Config {
 	return c
 }
 
-func WithKey(name string) string {
+func withKey(name string) string {
 	return configCenterPrefix + name
 }
