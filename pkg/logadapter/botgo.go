@@ -1,51 +1,50 @@
 package logadapter
 
 import (
-	"context"
-	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/go-kratos/kratos/v2/log"
 )
 
 type BotgoLogger struct {
-	log logx.Logger
+	lg *log.Helper
 }
 
-func NewBotgoLogger() *BotgoLogger {
-	return &BotgoLogger{log: logx.WithContext(context.Background())}
+func NewBotgoLogger(lg *log.Helper) *BotgoLogger {
+	return &BotgoLogger{lg: lg}
 }
 
 func (l *BotgoLogger) Debug(v ...interface{}) {
-	l.log.Debug(v...)
+	l.lg.Debug(v...)
 }
 
 func (l *BotgoLogger) Info(v ...interface{}) {
-	l.log.Info(v...)
+	l.lg.Info(v...)
 }
 
 func (l *BotgoLogger) Error(v ...interface{}) {
-	l.log.Error(v...)
+	l.lg.Error(v...)
 }
 
 func (l *BotgoLogger) Debugf(format string, v ...interface{}) {
-	l.log.Debugf(format, v...)
+	l.lg.Debugf(format, v...)
 }
 
 func (l *BotgoLogger) Infof(format string, v ...interface{}) {
-	l.log.Infof(format, v...)
+	l.lg.Infof(format, v...)
 }
 
 func (l *BotgoLogger) Errorf(format string, v ...interface{}) {
-	l.log.Errorf(format, v...)
+	l.lg.Errorf(format, v...)
 }
 
 func (l *BotgoLogger) Warn(v ...any) {
-	warns := append([]any{"Warning"}, v...)
-	l.log.Error(warns...)
+	l.lg.Warn(v...)
 }
 
 func (l *BotgoLogger) Warnf(format string, v ...any) {
-	l.log.Errorf("Warning "+format, v...)
+	l.lg.Warnf(format, v...)
 }
 
 func (l *BotgoLogger) Sync() error {
+	// won't need sync
 	return nil
 }

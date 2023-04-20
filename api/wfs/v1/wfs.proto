@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package wfs.v1;
+
+option go_package = "pipiao-bot/api/wfs/v1;v1";
+
+import "google/protobuf/empty.proto";
+
+service Wfs {
+  rpc GetCycles(google.protobuf.Empty) returns(CyclesResp);
+  rpc GetAlerts(google.protobuf.Empty) returns(google.protobuf.Empty);
+  rpc GetSorties(google.protobuf.Empty) returns(google.protobuf.Empty);
+  rpc GetVoidTrader(google.protobuf.Empty) returns(google.protobuf.Empty);
+  rpc GetWarframeMarket(google.protobuf.Empty) returns(google.protobuf.Empty);
+  rpc GetWarframeMarketRiven(google.protobuf.Empty) returns(google.protobuf.Empty);
+  rpc GetInvasions(google.protobuf.Empty) returns(google.protobuf.Empty);
+  rpc GetNightwaves(google.protobuf.Empty) returns(google.protobuf.Empty);
+  rpc GetKuva(google.protobuf.Empty) returns(google.protobuf.Empty);
+  rpc GetVoidStorm(google.protobuf.Empty) returns(google.protobuf.Empty);
+  rpc GetDailyDeal(google.protobuf.Empty) returns(google.protobuf.Empty);
+}
+
+message CyclesResp {
+  message Cycle {
+    string id = 1;
+    int64 activation = 2;
+    int64 expiry = 3;
+    string state = 4;
+    repeated int64 timeLeft = 5;
+  }
+  repeated Cycle cycles = 1;
+}

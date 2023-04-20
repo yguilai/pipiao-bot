@@ -1,0 +1,23 @@
+syntax = "proto3";
+package kratos.api;
+
+option go_package = "github.com/yguilai/pipiao-bot/app/transport/internal/conf;conf";
+
+message Bootstrap {
+  Data data = 1;
+}
+
+message Data {
+  message Nsq {
+    string addr = 1;
+    string lookup = 2;
+    string topic = 3;
+  }
+  message Bot {
+    uint64 appId = 1;
+    string token = 2;
+
+  }
+  Nsq nsq = 1;
+  Bot bot = 2;
+}

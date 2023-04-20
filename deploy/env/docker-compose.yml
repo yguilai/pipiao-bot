@@ -1,0 +1,89 @@
+version: '3'
+
+networks:
+  pipiao_network:
+    driver: bridge
+
+services:
+  nsqlookupd:
+    hostname: nsqlookupd
+    container_name: nsqlookupd
+    image: nsqio/nsq:latest
+    command: /nsqlookupd
+    networks:
+      - pipiao_network
+    ports:
+      - "4160:4160"
+      - "4161:4161"
+
+  nsqd:
+    hostname: nsqd
+    container_name: nsqd
+    image: nsqio/nsq:latest
+    command: /nsqd --lookupd-tcp-address=nsqlookupd:4160
+    depends_on:
+      - nsqlookupd
+    networks:
+      - pipiao_network
+    ports:
+      - "4150:4150"
+      - "4151:4151"
+
+  nsqadmin:
+    hostname: nsqadmin
+    container_name: nsqadmin
+    image: nsqio/nsq:latest
+    command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
+    depends_on:
+      - nsqlookupd
+    networks:
+      - pipiao_network
+    ports:
+      - "4171:4171"
+
+  redis-dev:
+    hostname: redis
+    container_name: redis
+    image: redis:7.0.10
+    command: redis-server /etc/redis.conf
+    volumes:
+      - ./redis/data:/data
+      - ./redis/redis.conf:/etc/redis.conf
+      - ./redis/logs:/var/log/redis
+    networks:
+      - pipiao_network
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - "6379:6379"
+
+  etcd0:
+    hostname: etcd0
+    container_name: etcd0
+    image: bitnami/etcd:latest
+    volumes:
+      - ./etcd/data:/bitnami/etcd
+    networks:
+      - pipiao_network
+    environment:
+      - TZ=Asia/Shanghai
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1002
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+
+  etcdkeeper:
+    hostname: etcdkeeper
+    container_name: etcdkeeper
+    image: evildecay/etcdkeeper:latest
+    networks:
+      - pipiao_network
+    depends_on:
+      - etcd0
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - "7000:8080"

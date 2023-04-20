@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package wft.v1;
+
+option go_package = "pipiao-bot/api/wft/v1;v1";
+
+service Wft {
+  rpc GetWarframeMarketItem(WmItemReq) returns(WmItemResp);
+  rpc GetWarframeOfficalItem(WarframeItemReq) returns(WarframeItemResp);
+}
+
+message WmItemReq {
+  string name = 1;
+}
+
+message WmItemResp {
+  string id = 1;
+  string thumb = 2;
+  string urlName = 3;
+  string itemName = 4;
+  bool vaulted = 5;
+}
+
+message WarframeItemReq {
+  string uniqueName = 1;
+}
+
+message WarframeItemResp {
+  string id = 1;
+  optional string name = 2;
+  optional string description = 3;
+}
+
