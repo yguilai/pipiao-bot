@@ -1,51 +1,43 @@
-# Kratos Project Template
+# 皮皮奥频道机器人
 
-## Install Kratos
-```
-go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
-```
-## Create a service
-```
-# Create a template project
-kratos new server
-
-cd server
-# Add a proto template
-kratos proto add api/server/server.proto
-# Generate the proto code
-kratos proto client api/server/server.proto
-# Generate the source code of service by proto file
-kratos proto server api/server/server.proto -t internal/service
-
-go generate ./...
-go build -o ./bin/ ./...
-./bin/server -conf ./configs
-```
-## Generate other auxiliary files by Makefile
-```
-# Download and update dependencies
-make init
-# Generate API files (include: pb.go, http, grpc, validate, swagger) by proto file
-make api
-# Generate all files
-make all
-```
-## Automated Initialization (wire)
-```
-# install wire
-go get github.com/google/wire/cmd/wire
-
-# generate wire
-cd cmd/server
-wire
+### 目录结构
+```text
+/api          相关proto文件及生成代码
+/app
+  /channelbot 频道机器人, 指令解析&消息回复
+  /transport  消息转发服务, 对接qq官方websocket, 将消息转发至消息队列
+  /wft        翻译服务(grpc), 拉取wf i18n词条, 及wm词条
+  /wfs        wf服务(grpc), 防腐、解析. 
+              对接wf官方服务、wm服务, 解析wf世界状态信息, 调用wm接口
+/deploy       开发依赖环境, 使用docker compose
+/pkg          封装的一些工具包
+/third_party  第三方proto文件
 ```
 
-## Docker
+### 代码生成
+
+- 配置代码生成
 ```bash
-# deploy
-docker deploy -t <your-docker-image-name> .
-
-# run
-docker run --rm -p 8000:8000 -p 9000:9000 -v </path/to/your/configs>:/data/conf <your-docker-image-name>
+make config
 ```
 
+- wire依赖注入
+```bash
+make generate
+```
+
+- proto代码生成
+```bash
+make api
+```
+
+### Run
+```bash
+# 运行依赖环境
+cd deploy/env
+docker-compose up -d
+
+# 启动消息转发服务, 其他服务类似操作 (需要提前在etcdkeeper配置中心加上相关配置)
+cd app/transport
+make dev
+```
