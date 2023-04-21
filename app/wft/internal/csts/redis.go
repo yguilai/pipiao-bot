@@ -1,4 +1,4 @@
-package consts
+package csts
 
 const (
 	WarframeMarketItemPrefix = "pipiao:wm:item:"

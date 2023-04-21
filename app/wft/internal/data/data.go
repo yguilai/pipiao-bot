@@ -4,7 +4,9 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-redis/redis/v8"
+	"github.com/hibiken/asynq"
 	"github.com/yguilai/pipiao-bot/app/wft/internal/conf"
+	"github.com/yguilai/pipiao-bot/app/wft/internal/csts"
 	"github.com/yguilai/pipiao-bot/pkg/consts"
 	"time"
 
@@ -19,6 +21,8 @@ var ProviderSet = wire.NewSet(
 	NewData,
 	NewRegistry,
 	NewRedisClient,
+	NewAsynqServer,
+	NewAsynqScheduler,
 	NewWarframeMarketEntryRepo,
 )
 
@@ -31,7 +35,6 @@ type Data struct {
 func NewData(c *conf.Data, rds redis.Cmdable, logger log.Logger) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
-		rds.ShutdownSave(context.Background())
 	}
 	return &Data{
 		rds: rds,
@@ -62,4 +65,27 @@ func NewRegistry(c *conf.Registry) registry.Registrar {
 		panic(err)
 	}
 	return etcdr.New(client)
+}
+
+func NewAsynqScheduler(conf *conf.Data) *asynq.Scheduler {
+	return asynq.NewScheduler(
+		asynq.RedisClientOpt{
+			Addr: conf.Redis.Addr,
+		},
+		&asynq.SchedulerOpts{},
+	)
+}
+
+func NewAsynqServer(conf *conf.Data) *asynq.Server {
+	return asynq.NewServer(
+		asynq.RedisClientOpt{
+			Addr: conf.Redis.Addr,
+		},
+		asynq.Config{
+			Concurrency: 10,
+			Queues: map[string]int{
+				csts.CronQueue: 1,
+			},
+		},
+	)
 }
