@@ -1,38 +1,36 @@
 package service
 
 import (
-	"encoding/json"
+	"context"
+	"github.com/bytedance/sonic"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/nsqio/go-nsq"
+	"github.com/hibiken/asynq"
 	"github.com/tencent-connect/botgo/dto"
 	"github.com/yguilai/pipiao-bot/app/transport/internal/conf"
 	"github.com/yguilai/pipiao-bot/pkg/consts"
 )
 
 type MessageForwardService struct {
-	logger   *log.Helper
-	producer *nsq.Producer
-	c        *conf.Data
+	logger *log.Helper
+	c      *conf.Data
+	ac     *asynq.Client
 }
 
-func NewMessageForwardService(logger log.Logger, c *conf.Data) *MessageForwardService {
-	producer, err := nsq.NewProducer(c.Nsq.Addr, nsq.NewConfig())
-	if err != nil {
-		panic(err)
-	}
+func NewMessageForwardService(logger log.Logger, c *conf.Data, ac *asynq.Client) *MessageForwardService {
 	return &MessageForwardService{
-		logger:   log.NewHelper(log.With(logger, consts.ModuleKey, "transport.service.messageforward")),
-		c:        c,
-		producer: producer,
+		logger: log.NewHelper(log.With(logger, consts.ModuleKey, "transport.service.message_forward")),
+		c:      c,
+		ac:     ac,
 	}
 }
 
 func (s *MessageForwardService) Handle(_ *dto.WSPayload, data *dto.Message) error {
-	msgBytes, err := json.Marshal(data)
+	msgBytes, err := sonic.Marshal(data)
 	if err != nil {
 		return err
 	}
-	err = s.producer.Publish(s.c.Nsq.Topic, msgBytes)
+	task := asynq.NewTask(s.c.Asynq.Type, msgBytes)
+	_, err = s.ac.EnqueueContext(context.Background(), task, asynq.Queue(s.c.Asynq.Queue))
 	if err != nil {
 		s.logger.Error(err)
 	}

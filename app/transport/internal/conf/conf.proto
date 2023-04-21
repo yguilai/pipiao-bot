@@ -8,16 +8,15 @@ message Bootstrap {
 }
 
 message Data {
-  message Nsq {
+  message Asynq {
     string addr = 1;
-    string lookup = 2;
-    string topic = 3;
+    string queue = 2;
+    string type = 3;
   }
   message Bot {
     uint64 appId = 1;
     string token = 2;
-
   }
-  Nsq nsq = 1;
+  Asynq asynq = 1;
   Bot bot = 2;
 }
