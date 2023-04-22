@@ -94,6 +94,7 @@ func NewAsynqServer(conf *conf.Data) *asynq.Server {
 
 func NewMeilisearchClient(conf *conf.Data) *meilisearch.Client {
 	return meilisearch.NewClient(meilisearch.ClientConfig{
-		Host: conf.Meilisearch.Addr,
+		Host:   conf.Meilisearch.Addr,
+		APIKey: conf.Meilisearch.MasterKey,
 	})
 }

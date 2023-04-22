@@ -20,8 +20,43 @@ func NewWorkerService(lg log.Logger, mls *meilisearch.Client) *WorkerService {
 }
 
 func (s *WorkerService) OnWarframeMarketRefresh(_ context.Context, _ *asynq.Task) error {
-	s.log.Info("OnWarframeMarketRefresh")
+	s.log.Info("start refresh warframe market entries")
+	items, err := getAllWmEntry()
+	if err != nil {
+		s.log.Errorf("fetch wm items error %s", err.Error())
+		return err
+	}
+	index := s.mls.Index(wmMeiliIndex)
 
+	stats, err := index.GetStats()
+	idxEmpty := false
+	if err != nil {
+		if e, ok := err.(*meilisearch.Error); ok && e.StatusCode == 404 {
+			idxEmpty = true
+		} else {
+			s.log.Error(err)
+			return err
+		}
+	}
+	if idxEmpty {
+		_, err := index.AddDocuments(items)
+		if err != nil {
+			s.log.Error(err)
+			return err
+		}
+	} else if stats != nil && stats.NumberOfDocuments != 0 {
+		s.log.Info(stats)
+		_, err := index.DeleteAllDocuments()
+		if err != nil {
+			s.log.Error(err)
+			return err
+		}
+		_, err = index.AddDocuments(items)
+		if err != nil {
+			s.log.Error(err)
+			return err
+		}
+	}
 	return nil
 }
 

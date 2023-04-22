@@ -29,7 +29,8 @@ message Data {
     google.protobuf.Duration write_timeout = 4;
   }
   message Meilisearch {
-    string addr = 1 ;
+    string addr = 1;
+    string masterKey = 2;
   }
   Redis redis = 1;
   Meilisearch meilisearch = 2;
