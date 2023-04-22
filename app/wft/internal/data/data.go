@@ -5,6 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-redis/redis/v8"
 	"github.com/hibiken/asynq"
+	"github.com/meilisearch/meilisearch-go"
 	"github.com/yguilai/pipiao-bot/app/wft/internal/conf"
 	"github.com/yguilai/pipiao-bot/app/wft/internal/csts"
 	"github.com/yguilai/pipiao-bot/pkg/consts"
@@ -23,6 +24,7 @@ var ProviderSet = wire.NewSet(
 	NewRedisClient,
 	NewAsynqServer,
 	NewAsynqScheduler,
+	NewMeilisearchClient,
 	NewWarframeMarketEntryRepo,
 )
 
@@ -88,4 +90,10 @@ func NewAsynqServer(conf *conf.Data) *asynq.Server {
 			},
 		},
 	)
+}
+
+func NewMeilisearchClient(conf *conf.Data) *meilisearch.Client {
+	return meilisearch.NewClient(meilisearch.ClientConfig{
+		Host: conf.Meilisearch.Addr,
+	})
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/yguilai/pipiao-bot/app/wft/internal/data"
 	"github.com/yguilai/pipiao-bot/app/wft/internal/server"
 	"github.com/yguilai/pipiao-bot/app/wft/internal/service"
+	"github.com/yguilai/pipiao-bot/app/wft/internal/service/worker"
 )
 
 import (
@@ -22,7 +23,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Registry, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Registry, refresh *conf.Refresh, logger log.Logger) (*kratos.App, func(), error) {
 	cmdable := data.NewRedisClient(confData, logger)
 	dataData, cleanup, err := data.NewData(confData, cmdable, logger)
 	if err != nil {
@@ -32,9 +33,11 @@ func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Regist
 	wftService := service.NewWftService(iWarframeMarketEntryRepo)
 	grpcServer := server.NewGRPCServer(confServer, wftService, logger)
 	scheduler := data.NewAsynqScheduler(confData)
-	cronTaskServer := server.NewCronTaskServer(logger, scheduler)
+	cronTaskServer := server.NewCronTaskServer(logger, scheduler, refresh)
 	asynqServer := data.NewAsynqServer(confData)
-	workerServer := server.NewWorkerServer(asynqServer)
+	client := data.NewMeilisearchClient(confData)
+	workerService := worker.NewWorkerService(logger, client)
+	workerServer := server.NewWorkerServer(asynqServer, workerService)
 	registrar := data.NewRegistry(registry)
 	app := newApp(logger, grpcServer, cronTaskServer, workerServer, registrar)
 	return app, func() {

@@ -4,15 +4,15 @@ import (
 	"context"
 	"github.com/hibiken/asynq"
 	"github.com/yguilai/pipiao-bot/app/wft/internal/csts"
-	"github.com/yguilai/pipiao-bot/app/wft/internal/service"
+	"github.com/yguilai/pipiao-bot/app/wft/internal/service/worker"
 )
 
 type WorkerServer struct {
 	server *asynq.Server
-	wmr    *service.WorkerService
+	wmr    *worker.WorkerService
 }
 
-func NewWorkerServer(server *asynq.Server, wmr *service.WorkerService) *WorkerServer {
+func NewWorkerServer(server *asynq.Server, wmr *worker.WorkerService) *WorkerServer {
 	return &WorkerServer{
 		server: server,
 		wmr:    wmr,

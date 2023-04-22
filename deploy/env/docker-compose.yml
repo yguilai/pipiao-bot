@@ -62,3 +62,27 @@ services:
       - TZ=Asia/Shanghai
     ports:
       - "7000:8080"
+
+  meilisearch:
+    hostname: meilisearch
+    container_name: meilisearch
+    image: getmeili/meilisearch:v1.1
+    networks:
+      - pipiao_network
+    environment:
+      - MEILI_MASTER_KEY=pipiao
+    ports:
+      - "7700:7700"
+    volumes:
+      - ./meilisearch/data:/meili_data
+
+  meilisearch-ui:
+    hostname: meilisearch-ui
+    container_name: meilisearch-ui
+    image: riccoxie/meilisearch-ui:latest
+    depends_on:
+      - meilisearch
+    networks:
+      - pipiao_network
+    ports:
+      - "7002:24900"
