@@ -25,7 +25,8 @@ import (
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Registry, refresh *conf.Refresh, logger log.Logger) (*kratos.App, func(), error) {
 	cmdable := data.NewRedisClient(confData, logger)
-	dataData, cleanup, err := data.NewData(confData, cmdable, logger)
+	client := data.NewMeilisearchClient(confData)
+	dataData, cleanup, err := data.NewData(confData, cmdable, client, logger)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -35,8 +36,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Regist
 	scheduler := data.NewAsynqScheduler(confData)
 	cronTaskServer := server.NewCronTaskServer(logger, scheduler, refresh)
 	asynqServer := data.NewAsynqServer(confData)
-	client := data.NewMeilisearchClient(confData)
-	workerService := worker.NewWorkerService(logger, client)
+	workerService := worker.NewWorkerService(logger, client, iWarframeMarketEntryRepo)
 	workerServer := server.NewWorkerServer(asynqServer, workerService)
 	registrar := data.NewRegistry(registry)
 	app := newApp(logger, grpcServer, cronTaskServer, workerServer, registrar)

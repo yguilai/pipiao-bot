@@ -21,16 +21,17 @@ func NewWftService(wm data.IWarframeMarketEntryRepo) *WftService {
 }
 
 func (s *WftService) GetWarframeMarketItem(ctx context.Context, req *pb.WmItemReq) (*pb.WmItemResp, error) {
-	wmi, err := s.wm.GetByName(ctx, req.Name)
+	items, err := s.wm.GetByName(ctx, req.Name)
 	if err != nil {
 		return nil, err
 	}
-	var wmir pb.WmItemResp
-	err = copier.Copy(&wmir, wmi)
+
+	var res []*pb.WmItemResp_WmItem
+	err = copier.Copy(res, items)
 	if err != nil {
 		return nil, err
 	}
-	return &wmir, nil
+	return &pb.WmItemResp{Items: res}, nil
 }
 
 func (s *WftService) GetWarframeOfficalItem(ctx context.Context, req *pb.WarframeItemReq) (*pb.WarframeItemResp, error) {

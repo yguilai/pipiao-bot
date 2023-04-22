@@ -14,11 +14,14 @@ message WmItemReq {
 }
 
 message WmItemResp {
-  string id = 1;
-  string thumb = 2;
-  string urlName = 3;
-  string itemName = 4;
-  bool vaulted = 5;
+  message WmItem {
+    string id = 1;
+    string thumb = 2;
+    string urlName = 3;
+    string itemName = 4;
+    bool vaulted = 5;
+  }
+  repeated WmItem items = 1;
 }
 
 message WarframeItemReq {

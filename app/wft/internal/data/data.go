@@ -31,15 +31,17 @@ var ProviderSet = wire.NewSet(
 // Data .
 type Data struct {
 	rds redis.Cmdable
+	mls *meilisearch.Client
 }
 
 // NewData .
-func NewData(c *conf.Data, rds redis.Cmdable, logger log.Logger) (*Data, func(), error) {
+func NewData(c *conf.Data, rds redis.Cmdable, mls *meilisearch.Client, logger log.Logger) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
 	return &Data{
 		rds: rds,
+		mls: mls,
 	}, cleanup, nil
 }
 
