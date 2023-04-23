@@ -1,7 +1,6 @@
 package cycle
 
 import (
-	"math"
 	"time"
 )
 
@@ -13,7 +12,7 @@ const (
 
 func GetCurrentEarthCycle() *Cycle {
 	now := time.Now().UnixMilli()
-	cycleSeconds := int64(math.Floor(float64(now/1000))) % earthCycleSecond
+	cycleSeconds := now / 1000 % earthCycleSecond
 
 	secondsLeft := earthCycleSecondHalf - (cycleSeconds % earthCycleSecondHalf)
 	millisLeft := secondsLeft * 1000
