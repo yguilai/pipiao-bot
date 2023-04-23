@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/yguilai/pipiao-bot/pkg/etcd"
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
@@ -9,7 +10,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/yguilai/pipiao-bot/app/transport/internal/conf"
 	"github.com/yguilai/pipiao-bot/app/transport/internal/server"
-	"github.com/yguilai/pipiao-bot/pkg/configcenter"
 	_ "go.uber.org/automaxprocs"
 )
 
@@ -53,7 +53,7 @@ func main() {
 		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 	)
-	c := configcenter.NewConfigCenter(flagconf, Name)
+	c := etcd.NewConfigCenter(flagconf, Name)
 	defer c.Close()
 
 	var bc conf.Bootstrap

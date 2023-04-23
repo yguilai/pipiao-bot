@@ -6,7 +6,6 @@
 package main
 
 import (
-	"github.com/yguilai/pipiao-bot/app/wfs/internal/biz"
 	"github.com/yguilai/pipiao-bot/app/wfs/internal/conf"
 	"github.com/yguilai/pipiao-bot/app/wfs/internal/data"
 	"github.com/yguilai/pipiao-bot/app/wfs/internal/server"
@@ -18,6 +17,6 @@ import (
 )
 
 // wireApp init kratos application.
-func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
+func wireApp(log.Logger, *conf.Server, *conf.Data, *conf.Registry) (*kratos.App, func(), error) {
+	panic(wire.Build(server.ProviderSet, data.ProviderSet, service.ProviderSet, newApp))
 }

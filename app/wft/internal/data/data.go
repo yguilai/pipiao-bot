@@ -2,19 +2,18 @@ package data
 
 import (
 	"context"
-	"github.com/go-kratos/kratos/v2/registry"
+	etcdr "github.com/go-kratos/kratos/contrib/registry/etcd/v2"
 	"github.com/go-redis/redis/v8"
 	"github.com/hibiken/asynq"
 	"github.com/meilisearch/meilisearch-go"
 	"github.com/yguilai/pipiao-bot/app/wft/internal/conf"
 	"github.com/yguilai/pipiao-bot/app/wft/internal/csts"
 	"github.com/yguilai/pipiao-bot/pkg/consts"
+	"github.com/yguilai/pipiao-bot/pkg/etcd"
 	"time"
 
-	etcdr "github.com/go-kratos/kratos/contrib/registry/etcd/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
-	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 // ProviderSet is data providers.
@@ -61,14 +60,8 @@ func NewRedisClient(c *conf.Data, lg log.Logger) redis.Cmdable {
 	return client
 }
 
-func NewRegistry(c *conf.Registry) registry.Registrar {
-	client, err := clientv3.New(clientv3.Config{
-		Endpoints: []string{c.Etcd.Addr},
-	})
-	if err != nil {
-		panic(err)
-	}
-	return etcdr.New(client)
+func NewRegistry(c *conf.Registry) *etcdr.Registry {
+	return etcd.NewEtcdRegistry([]string{c.Etcd.Addr})
 }
 
 func NewAsynqScheduler(conf *conf.Data) *asynq.Scheduler {

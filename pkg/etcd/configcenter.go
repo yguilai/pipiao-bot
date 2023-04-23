@@ -1,4 +1,4 @@
-package configcenter
+package etcd
 
 import (
 	etcdc "github.com/go-kratos/kratos/contrib/config/etcd/v2"

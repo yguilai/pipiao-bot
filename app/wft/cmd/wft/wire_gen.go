@@ -38,8 +38,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Regist
 	asynqServer := data.NewAsynqServer(confData)
 	workerService := worker.NewWorkerService(logger, client, iWarframeMarketEntryRepo)
 	workerServer := server.NewWorkerServer(asynqServer, workerService)
-	registrar := data.NewRegistry(registry)
-	app := newApp(logger, grpcServer, cronTaskServer, workerServer, registrar)
+	etcdRegistry := data.NewRegistry(registry)
+	app := newApp(logger, grpcServer, cronTaskServer, workerServer, etcdRegistry)
 	return app, func() {
 		cleanup()
 	}, nil

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package wft.v1;
 
-option go_package = "pipiao-bot/api/wft/v1;v1";
+option go_package = "github.com/yguilai/pipiao-bot/api/wft/v1;v1";
 
 service Wft {
   rpc GetWarframeMarketItem(WmItemReq) returns(WmItemResp);

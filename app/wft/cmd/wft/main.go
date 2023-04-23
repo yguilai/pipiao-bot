@@ -2,13 +2,12 @@ package main
 
 import (
 	"flag"
+	etcdr "github.com/go-kratos/kratos/contrib/registry/etcd/v2"
+	"github.com/yguilai/pipiao-bot/pkg/etcd"
 	"os"
 
-	"github.com/go-kratos/kratos/v2/registry"
-	"github.com/yguilai/pipiao-bot/app/wft/internal/server"
-	"github.com/yguilai/pipiao-bot/pkg/configcenter"
-
 	"github.com/yguilai/pipiao-bot/app/wft/internal/conf"
+	"github.com/yguilai/pipiao-bot/app/wft/internal/server"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
@@ -20,7 +19,7 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name string = "wft"
+	Name string = "pipiao.wft"
 	// Version is the version of the compiled software.
 	Version string
 	// flagconf is the config flag.
@@ -34,7 +33,7 @@ func init() {
 }
 
 func newApp(logger log.Logger, gs *grpc.Server, cs *server.CronTaskServer, ws *server.WorkerServer,
-	rr registry.Registrar) *kratos.App {
+	rr *etcdr.Registry) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -57,7 +56,7 @@ func main() {
 		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 	)
-	c := configcenter.NewConfigCenter(flagconf, Name)
+	c := etcd.NewConfigCenter(flagconf, Name)
 	defer c.Close()
 
 	var bc conf.Bootstrap

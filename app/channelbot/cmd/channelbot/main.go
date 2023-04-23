@@ -2,15 +2,14 @@ package main
 
 import (
 	"flag"
+	"github.com/yguilai/pipiao-bot/pkg/etcd"
 	"os"
-
-	"github.com/yguilai/pipiao-bot/app/channelbot/internal/conf"
-	"github.com/yguilai/pipiao-bot/app/channelbot/internal/server"
-	"github.com/yguilai/pipiao-bot/pkg/configcenter"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/yguilai/pipiao-bot/app/channelbot/internal/conf"
+	"github.com/yguilai/pipiao-bot/app/channelbot/internal/server"
 
 	_ "go.uber.org/automaxprocs"
 )
@@ -55,7 +54,7 @@ func main() {
 		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 	)
-	c := configcenter.NewConfigCenter(flagconf, Name)
+	c := etcd.NewConfigCenter(flagconf, Name)
 	defer c.Close()
 
 	if err := c.Load(); err != nil {

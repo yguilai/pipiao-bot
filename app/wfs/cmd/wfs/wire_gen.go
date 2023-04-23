@@ -7,31 +7,26 @@
 package main
 
 import (
-	"github.com/yguilai/pipiao-bot/app/wfs/internal/biz"
+	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/yguilai/pipiao-bot/app/wfs/internal/conf"
 	"github.com/yguilai/pipiao-bot/app/wfs/internal/data"
 	"github.com/yguilai/pipiao-bot/app/wfs/internal/server"
 	"github.com/yguilai/pipiao-bot/app/wfs/internal/service"
+)
 
-	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/log"
+import (
+	_ "go.uber.org/automaxprocs"
 )
 
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	dataData, cleanup, err := data.NewData(confData, logger)
-	if err != nil {
-		return nil, nil, err
-	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
-	greeterService := service.NewGreeterService(greeterUsecase)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
-	app := newApp(logger, grpcServer, httpServer)
+func wireApp(logger log.Logger, confServer *conf.Server, confData *conf.Data, registry *conf.Registry) (*kratos.App, func(), error) {
+	wfsService := service.NewWfsService()
+	grpcServer := server.NewGRPCServer(confServer, wfsService, logger)
+	etcdRegistry := data.NewRegistry(registry)
+	app := newApp(logger, grpcServer, etcdRegistry)
 	return app, func() {
-		cleanup()
 	}, nil
 }

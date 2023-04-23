@@ -1,6 +1,9 @@
 package server
 
 import (
+	"context"
+	"github.com/go-kratos/kratos/v2/middleware/logging"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	v1 "github.com/yguilai/pipiao-bot/api/wft/v1"
 	"github.com/yguilai/pipiao-bot/app/wft/internal/conf"
 	"github.com/yguilai/pipiao-bot/app/wft/internal/service"
@@ -14,7 +17,13 @@ import (
 func NewGRPCServer(c *conf.Server, wft *service.WftService, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
-			recovery.Recovery(),
+			recovery.Recovery(recovery.WithHandler(func(ctx context.Context, req, err interface{}) error {
+				l := log.NewHelper(log.With(logger, "message", "panic"))
+				l.Error(err)
+				return nil
+			})),
+			tracing.Server(),
+			logging.Server(log.NewFilter(logger, log.FilterLevel(log.LevelError))),
 		),
 	}
 	if c.Grpc.Network != "" {

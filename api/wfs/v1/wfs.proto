@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package wfs.v1;
 
-option go_package = "pipiao-bot/api/wfs/v1;v1";
+option go_package = "github.com/yguilai/pipiao-bot/api/wfs/v1;v1";
 
 import "google/protobuf/empty.proto";
 
@@ -11,7 +11,7 @@ service Wfs {
   rpc GetAlerts(google.protobuf.Empty) returns(google.protobuf.Empty);
   rpc GetSorties(google.protobuf.Empty) returns(google.protobuf.Empty);
   rpc GetVoidTrader(google.protobuf.Empty) returns(google.protobuf.Empty);
-  rpc GetWarframeMarket(google.protobuf.Empty) returns(google.protobuf.Empty);
+  rpc GetWarframeMarket(WarframeMarketReq) returns(google.protobuf.Empty);
   rpc GetWarframeMarketRiven(google.protobuf.Empty) returns(google.protobuf.Empty);
   rpc GetInvasions(google.protobuf.Empty) returns(google.protobuf.Empty);
   rpc GetNightwaves(google.protobuf.Empty) returns(google.protobuf.Empty);
@@ -29,4 +29,8 @@ message CyclesResp {
     repeated int64 timeLeft = 5;
   }
   repeated Cycle cycles = 1;
+}
+
+message WarframeMarketReq {
+  string name = 1;
 }
