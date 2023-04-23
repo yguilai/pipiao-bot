@@ -2,10 +2,11 @@ package main
 
 import (
 	"flag"
+	"os"
+
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/yguilai/pipiao-bot/app/wft/internal/server"
 	"github.com/yguilai/pipiao-bot/pkg/configcenter"
-	"os"
 
 	"github.com/yguilai/pipiao-bot/app/wft/internal/conf"
 

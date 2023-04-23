@@ -3,39 +3,20 @@ package kratos.api;
 
 option go_package = "github.com/yguilai/pipiao-bot/app/channelbot/internal/conf;conf";
 
-import "google/protobuf/duration.proto";
-
 message Bootstrap {
-  Server server = 1;
-  Data data = 2;
-}
-
-message Server {
-  message HTTP {
-    string network = 1;
-    string addr = 2;
-    google.protobuf.Duration timeout = 3;
-  }
-  message GRPC {
-    string network = 1;
-    string addr = 2;
-    google.protobuf.Duration timeout = 3;
-  }
-  HTTP http = 1;
-  GRPC grpc = 2;
+  Data data = 1;
 }
 
 message Data {
-  message Database {
-    string driver = 1;
-    string source = 2;
+  message Asynq {
+    string addr = 1;
+    string queue = 2;
+    string type = 3;
   }
-  message Redis {
-    string network = 1;
-    string addr = 2;
-    google.protobuf.Duration read_timeout = 3;
-    google.protobuf.Duration write_timeout = 4;
+  message Bot {
+    uint64 appId = 1;
+    string token = 2;
   }
-  Database database = 1;
-  Redis redis = 2;
+  Asynq asynq = 1;
+  Bot bot = 2;
 }

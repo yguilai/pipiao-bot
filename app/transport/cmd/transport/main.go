@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+	"os"
+
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
@@ -9,7 +11,6 @@ import (
 	"github.com/yguilai/pipiao-bot/app/transport/internal/server"
 	"github.com/yguilai/pipiao-bot/pkg/configcenter"
 	_ "go.uber.org/automaxprocs"
-	"os"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"

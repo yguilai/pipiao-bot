@@ -7,31 +7,26 @@
 package main
 
 import (
-	"github.com/yguilai/pipiao-bot/app/channelbot/internal/biz"
+	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/yguilai/pipiao-bot/app/channelbot/internal/conf"
 	"github.com/yguilai/pipiao-bot/app/channelbot/internal/data"
 	"github.com/yguilai/pipiao-bot/app/channelbot/internal/server"
 	"github.com/yguilai/pipiao-bot/app/channelbot/internal/service"
+)
 
-	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/log"
+import (
+	_ "go.uber.org/automaxprocs"
 )
 
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	dataData, cleanup, err := data.NewData(confData, logger)
-	if err != nil {
-		return nil, nil, err
-	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
-	greeterService := service.NewGreeterService(greeterUsecase)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
-	app := newApp(logger, grpcServer, httpServer)
+func wireApp(confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
+	asynqServer := data.NewAsynqServer(confData)
+	channelBotService := service.NewChannelBotService()
+	serverAsynqServer := server.NewAsynqServer(asynqServer, confData, channelBotService, logger)
+	app := newApp(logger, serverAsynqServer)
 	return app, func() {
-		cleanup()
 	}, nil
 }
