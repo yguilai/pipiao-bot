@@ -8,16 +8,17 @@ import "google/protobuf/empty.proto";
 
 service Wfs {
   rpc GetCycles(google.protobuf.Empty) returns(CyclesResp);
-  rpc GetAlerts(google.protobuf.Empty) returns(google.protobuf.Empty);
-  rpc GetSorties(google.protobuf.Empty) returns(google.protobuf.Empty);
-  rpc GetVoidTrader(google.protobuf.Empty) returns(google.protobuf.Empty);
-  rpc GetWarframeMarket(WarframeMarketReq) returns(google.protobuf.Empty);
-  rpc GetWarframeMarketRiven(google.protobuf.Empty) returns(google.protobuf.Empty);
-  rpc GetInvasions(google.protobuf.Empty) returns(google.protobuf.Empty);
-  rpc GetNightwaves(google.protobuf.Empty) returns(google.protobuf.Empty);
-  rpc GetKuva(google.protobuf.Empty) returns(google.protobuf.Empty);
-  rpc GetVoidStorm(google.protobuf.Empty) returns(google.protobuf.Empty);
-  rpc GetDailyDeal(google.protobuf.Empty) returns(google.protobuf.Empty);
+  rpc GetAlerts(google.protobuf.Empty) returns(AlertsResp);
+  rpc GetSorties(google.protobuf.Empty) returns(SortiesResp);
+  rpc GetVoidTrader(google.protobuf.Empty) returns(VoidTraderResp);
+  rpc GetWarframeMarket(WarframeMarketReq) returns(WarframeMarketResp);
+  rpc GetWarframeMarketRiven(WarframeMarketRivenReq) returns(WarframeMarketRivenResp);
+  rpc GetWarframeMarketLich(WarframeMarketLichReq) returns(WarframeMarketLichResp);
+  rpc GetInvasions(google.protobuf.Empty) returns(InvasionsResp);
+  rpc GetNightwaves(google.protobuf.Empty) returns(NightwavesResp);
+  rpc GetKuva(google.protobuf.Empty) returns(KuvaResp);
+  rpc GetVoidStorm(google.protobuf.Empty) returns(VoidStormResp);
+  rpc GetDailyDeal(google.protobuf.Empty) returns(DailyDealsResp);
 }
 
 message CyclesResp {
@@ -31,6 +32,260 @@ message CyclesResp {
   repeated Cycle cycles = 1;
 }
 
+message AlertsResp {
+
+}
+
+message VoidStormResp {
+  message Fissure {
+    string id = 1;
+    string activation = 2;
+    string startString = 3;
+    string expiry = 4;
+    bool active = 5;
+    string node = 6;
+    string missionType = 7;
+    string missionKey = 8;
+    string enemy = 9;
+    string enemyKey = 10;
+    string nodeKey = 11;
+    string tier = 12;
+    uint32 tierNum = 13;
+    bool expired = 14;
+    string eta = 15;
+    bool isStorm = 16;
+    bool isHard = 17;
+  }
+  repeated Fissure fissures = 1;
+}
+
+message SortiesResp {
+  message Variant {
+    string missionType = 1;
+    string modifier = 2;
+    string modifierDescription = 3;
+    string node = 4;
+  }
+
+  string id = 1;
+  string activation = 2;
+  string startString = 3;
+  string expiry = 4;
+  bool active = 5;
+  string rewardPool = 6;
+  repeated Variant variants = 7;
+  string boss = 9;
+  string faction = 10;
+  bool expired = 11;
+  string eta = 12;
+}
+
+message VoidTraderResp {
+  string id = 1;
+  string activation = 2;
+  string startString = 3;
+  string expiry = 4;
+  bool active = 5;
+  string character = 6;
+  string location = 7;
+  string psId = 9;
+  string endString = 10;
+  string initialStart = 11;
+}
+
+message InvasionsResp {
+
+}
+
+message NightwavesResp {
+
+}
+
+message KuvaResp {
+
+}
+
+message DailyDealsResp {
+  message DailyDeal {
+    string item = 1;
+    string expiry = 2;
+    string activation = 3;
+    uint32 originalPrice = 4;
+    uint32 salePrice = 5;
+    uint32 total = 6;
+    uint32 sold = 7;
+    string id = 8;
+    string eta = 9;
+    uint32 discount = 10;
+  }
+  repeated DailyDeal dailyDeals = 1;
+}
+
 message WarframeMarketReq {
   string name = 1;
+  optional string platform = 2;
+}
+
+message WarframeMarketResp {
+  message WarframeMarketOrder {
+    string id = 1;
+    // 白金
+    int64 platinum = 2;
+    // 数量
+    int32 quantity = 3;
+    string orderType = 4;
+    string creationDate = 5;
+    string lastUpdate = 6;
+    string platform = 7;
+    bool visible = 8;
+    string region = 9;
+    WarframeMarketUser user = 10;
+  }
+  repeated WarframeMarketOrder orders = 1;
+}
+
+message WarframeMarketUser {
+  string id = 1;
+  string ingameName = 2;
+  string avatar = 3;
+  string locale = 4;
+  string region = 5;
+  string status = 6;
+  int64 reputation = 7;
+}
+
+// warframe market buyout policy enum
+enum WmaBuyoutPolicy {
+  With = 0;
+  Direct = 1;
+}
+
+enum WmaSortBy {
+  PriceDesc = 0;
+  PriceAsc = 1;
+  DamageDesc = 2;
+  DamageAsc = 3;
+  PositiveAttrDesc = 4;
+  PositiveAttrAsc = 5;
+}
+
+message WarframeMarketRivenReq {
+  optional string platform = 1;
+  optional WmaBuyoutPolicy buyoutPolicy = 2;
+  string weaponUrlName = 3;
+  optional string positiveStats = 4;
+  optional string negativeStats = 5;
+  enum WmrOperation {
+    AllOf = 0;
+    AnyOf = 1;
+  }
+  optional WmrOperation operation = 6;
+  optional int32 masteryRankMin = 7;
+  optional int32 masteryRankMax = 8;
+  optional int32 reRollsMin = 9;
+  optional int32 reRollsMax = 10;
+  optional string modRank = 11;
+  optional string polarity = 12;
+  WmaSortBy sortBy = 13;
+}
+
+message WarframeMarketLichReq {
+  optional string platform = 1;
+  optional WmaBuyoutPolicy buyoutPolicy = 2;
+  string weaponUrlName = 3;
+  enum WmlElement {
+    Impact = 0;
+    Heat = 1;
+    Cold = 2;
+    Electricity = 3;
+    Toxin = 4;
+    Magnetic = 5;
+    Radiation = 6;
+  }
+  optional WmlElement element = 4;
+  optional bool ephemera = 5;
+  optional int32 damageMin = 6;
+  optional int32 damageMax = 7;
+  optional string quirk = 8;
+  WmaSortBy sortBy = 9;
+}
+
+message WarframeMarketRivenResp {
+  message Attribute {
+    bool positive = 1;
+    uint32 value = 2;
+    string urlName = 3;
+  }
+
+  message Item {
+    string type = 1;
+    repeated Attribute attributes = 2;
+    string name = 3;
+    uint32 masteryLevel = 4;
+    uint32 reRolls = 5;
+    string weaponUrlName = 6;
+    string polarity = 7;
+    uint32 modRank = 8;
+  }
+
+  string id = 1;
+  uint32 minimal_reputation = 2;
+  string winner = 3;
+  bool private = 4;
+  bool visible = 5;
+  string noteRaw = 6;
+  string note = 7;
+  WarframeMarketUser owner = 8;
+  uint32 startingPrice = 9;
+  uint32 buyoutPrice = 10;
+  uint32 minimalIncrement = 11;
+  bool isDirectSell = 12;
+  int32 topBid = 13;
+  string created = 14;
+  string updated = 15;
+  string platform = 16;
+  bool closed = 17;
+  string isMarkedFor = 18;
+  string markedOperationAt = 19;
+  Item item = 20;
+}
+
+message WarframeMarketLichResp {
+  message Attribute {
+    bool positive = 1;
+    uint32 value = 2;
+    string urlName = 3;
+  }
+
+  message Item {
+    string type = 1;
+    repeated Attribute attributes = 2;
+    string name = 3;
+    uint32 masteryLevel = 4;
+    uint32 reRolls = 5;
+    string weaponUrlName = 6;
+    string polarity = 7;
+    uint32 modRank = 8;
+  }
+
+  string id = 1;
+  uint32 minimal_reputation = 2;
+  string winner = 3;
+  bool private = 4;
+  bool visible = 5;
+  string noteRaw = 6;
+  string note = 7;
+  WarframeMarketUser owner = 8;
+  uint32 startingPrice = 9;
+  uint32 buyoutPrice = 10;
+  uint32 minimalIncrement = 11;
+  bool isDirectSell = 12;
+  int32 topBid = 13;
+  string created = 14;
+  string updated = 15;
+  string platform = 16;
+  bool closed = 17;
+  string isMarkedFor = 18;
+  string markedOperationAt = 19;
+  Item item = 20;
 }

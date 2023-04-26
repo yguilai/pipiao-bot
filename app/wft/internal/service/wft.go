@@ -20,7 +20,7 @@ func NewWftService(wm data.IWarframeMarketEntryRepo) *WftService {
 	}
 }
 
-func (s *WftService) GetWarframeMarketItem(ctx context.Context, req *pb.WmItemReq) (*pb.WmItemResp, error) {
+func (s *WftService) GetWarframeMarketItem(ctx context.Context, req *pb.NameSearchReq) (*pb.WmItemResp, error) {
 	items, err := s.wm.GetByName(ctx, req.Name)
 	if err != nil {
 		return nil, err
@@ -34,6 +34,10 @@ func (s *WftService) GetWarframeMarketItem(ctx context.Context, req *pb.WmItemRe
 	return &pb.WmItemResp{Items: res}, nil
 }
 
-func (s *WftService) GetWarframeOfficalItem(ctx context.Context, req *pb.WarframeItemReq) (*pb.WarframeItemResp, error) {
+func (s *WftService) GetWarframeOfficalItem(ctx context.Context, req *pb.NameSearchReq) (*pb.WarframeItemResp, error) {
 	return &pb.WarframeItemResp{}, nil
+}
+
+func (s *WftService) GetWarframeMarketAuction(ctx context.Context, req *pb.NameSearchReq) (*pb.WmItemResp, error) {
+	return &pb.WmItemResp{}, nil
 }

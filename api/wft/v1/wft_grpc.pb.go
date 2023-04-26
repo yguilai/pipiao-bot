@@ -19,16 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Wft_GetWarframeMarketItem_FullMethodName  = "/wft.v1.Wft/GetWarframeMarketItem"
-	Wft_GetWarframeOfficalItem_FullMethodName = "/wft.v1.Wft/GetWarframeOfficalItem"
+	Wft_GetWarframeMarketItem_FullMethodName    = "/wft.v1.Wft/GetWarframeMarketItem"
+	Wft_GetWarframeOfficalItem_FullMethodName   = "/wft.v1.Wft/GetWarframeOfficalItem"
+	Wft_GetWarframeMarketAuction_FullMethodName = "/wft.v1.Wft/GetWarframeMarketAuction"
 )
 
 // WftClient is the client API for Wft service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WftClient interface {
-	GetWarframeMarketItem(ctx context.Context, in *WmItemReq, opts ...grpc.CallOption) (*WmItemResp, error)
-	GetWarframeOfficalItem(ctx context.Context, in *WarframeItemReq, opts ...grpc.CallOption) (*WarframeItemResp, error)
+	GetWarframeMarketItem(ctx context.Context, in *NameSearchReq, opts ...grpc.CallOption) (*WmItemResp, error)
+	GetWarframeOfficalItem(ctx context.Context, in *NameSearchReq, opts ...grpc.CallOption) (*WarframeItemResp, error)
+	GetWarframeMarketAuction(ctx context.Context, in *NameSearchReq, opts ...grpc.CallOption) (*WmItemResp, error)
 }
 
 type wftClient struct {
@@ -39,7 +41,7 @@ func NewWftClient(cc grpc.ClientConnInterface) WftClient {
 	return &wftClient{cc}
 }
 
-func (c *wftClient) GetWarframeMarketItem(ctx context.Context, in *WmItemReq, opts ...grpc.CallOption) (*WmItemResp, error) {
+func (c *wftClient) GetWarframeMarketItem(ctx context.Context, in *NameSearchReq, opts ...grpc.CallOption) (*WmItemResp, error) {
 	out := new(WmItemResp)
 	err := c.cc.Invoke(ctx, Wft_GetWarframeMarketItem_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -48,9 +50,18 @@ func (c *wftClient) GetWarframeMarketItem(ctx context.Context, in *WmItemReq, op
 	return out, nil
 }
 
-func (c *wftClient) GetWarframeOfficalItem(ctx context.Context, in *WarframeItemReq, opts ...grpc.CallOption) (*WarframeItemResp, error) {
+func (c *wftClient) GetWarframeOfficalItem(ctx context.Context, in *NameSearchReq, opts ...grpc.CallOption) (*WarframeItemResp, error) {
 	out := new(WarframeItemResp)
 	err := c.cc.Invoke(ctx, Wft_GetWarframeOfficalItem_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *wftClient) GetWarframeMarketAuction(ctx context.Context, in *NameSearchReq, opts ...grpc.CallOption) (*WmItemResp, error) {
+	out := new(WmItemResp)
+	err := c.cc.Invoke(ctx, Wft_GetWarframeMarketAuction_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -61,8 +72,9 @@ func (c *wftClient) GetWarframeOfficalItem(ctx context.Context, in *WarframeItem
 // All implementations must embed UnimplementedWftServer
 // for forward compatibility
 type WftServer interface {
-	GetWarframeMarketItem(context.Context, *WmItemReq) (*WmItemResp, error)
-	GetWarframeOfficalItem(context.Context, *WarframeItemReq) (*WarframeItemResp, error)
+	GetWarframeMarketItem(context.Context, *NameSearchReq) (*WmItemResp, error)
+	GetWarframeOfficalItem(context.Context, *NameSearchReq) (*WarframeItemResp, error)
+	GetWarframeMarketAuction(context.Context, *NameSearchReq) (*WmItemResp, error)
 	mustEmbedUnimplementedWftServer()
 }
 
@@ -70,11 +82,14 @@ type WftServer interface {
 type UnimplementedWftServer struct {
 }
 
-func (UnimplementedWftServer) GetWarframeMarketItem(context.Context, *WmItemReq) (*WmItemResp, error) {
+func (UnimplementedWftServer) GetWarframeMarketItem(context.Context, *NameSearchReq) (*WmItemResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetWarframeMarketItem not implemented")
 }
-func (UnimplementedWftServer) GetWarframeOfficalItem(context.Context, *WarframeItemReq) (*WarframeItemResp, error) {
+func (UnimplementedWftServer) GetWarframeOfficalItem(context.Context, *NameSearchReq) (*WarframeItemResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetWarframeOfficalItem not implemented")
+}
+func (UnimplementedWftServer) GetWarframeMarketAuction(context.Context, *NameSearchReq) (*WmItemResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWarframeMarketAuction not implemented")
 }
 func (UnimplementedWftServer) mustEmbedUnimplementedWftServer() {}
 
@@ -90,7 +105,7 @@ func RegisterWftServer(s grpc.ServiceRegistrar, srv WftServer) {
 }
 
 func _Wft_GetWarframeMarketItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(WmItemReq)
+	in := new(NameSearchReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -102,13 +117,13 @@ func _Wft_GetWarframeMarketItem_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: Wft_GetWarframeMarketItem_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WftServer).GetWarframeMarketItem(ctx, req.(*WmItemReq))
+		return srv.(WftServer).GetWarframeMarketItem(ctx, req.(*NameSearchReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Wft_GetWarframeOfficalItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(WarframeItemReq)
+	in := new(NameSearchReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -120,7 +135,25 @@ func _Wft_GetWarframeOfficalItem_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: Wft_GetWarframeOfficalItem_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WftServer).GetWarframeOfficalItem(ctx, req.(*WarframeItemReq))
+		return srv.(WftServer).GetWarframeOfficalItem(ctx, req.(*NameSearchReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wft_GetWarframeMarketAuction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NameSearchReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WftServer).GetWarframeMarketAuction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wft_GetWarframeMarketAuction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WftServer).GetWarframeMarketAuction(ctx, req.(*NameSearchReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -139,6 +172,10 @@ var Wft_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetWarframeOfficalItem",
 			Handler:    _Wft_GetWarframeOfficalItem_Handler,
+		},
+		{
+			MethodName: "GetWarframeMarketAuction",
+			Handler:    _Wft_GetWarframeMarketAuction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

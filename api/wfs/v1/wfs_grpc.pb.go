@@ -26,6 +26,7 @@ const (
 	Wfs_GetVoidTrader_FullMethodName          = "/wfs.v1.Wfs/GetVoidTrader"
 	Wfs_GetWarframeMarket_FullMethodName      = "/wfs.v1.Wfs/GetWarframeMarket"
 	Wfs_GetWarframeMarketRiven_FullMethodName = "/wfs.v1.Wfs/GetWarframeMarketRiven"
+	Wfs_GetWarframeMarketLich_FullMethodName  = "/wfs.v1.Wfs/GetWarframeMarketLich"
 	Wfs_GetInvasions_FullMethodName           = "/wfs.v1.Wfs/GetInvasions"
 	Wfs_GetNightwaves_FullMethodName          = "/wfs.v1.Wfs/GetNightwaves"
 	Wfs_GetKuva_FullMethodName                = "/wfs.v1.Wfs/GetKuva"
@@ -38,16 +39,17 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WfsClient interface {
 	GetCycles(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*CyclesResp, error)
-	GetAlerts(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetSorties(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetVoidTrader(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetWarframeMarket(ctx context.Context, in *WarframeMarketReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetWarframeMarketRiven(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetInvasions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetNightwaves(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetKuva(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetVoidStorm(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetDailyDeal(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetAlerts(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AlertsResp, error)
+	GetSorties(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SortiesResp, error)
+	GetVoidTrader(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*VoidTraderResp, error)
+	GetWarframeMarket(ctx context.Context, in *WarframeMarketReq, opts ...grpc.CallOption) (*WarframeMarketResp, error)
+	GetWarframeMarketRiven(ctx context.Context, in *WarframeMarketRivenReq, opts ...grpc.CallOption) (*WarframeMarketRivenResp, error)
+	GetWarframeMarketLich(ctx context.Context, in *WarframeMarketLichReq, opts ...grpc.CallOption) (*WarframeMarketLichResp, error)
+	GetInvasions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InvasionsResp, error)
+	GetNightwaves(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*NightwavesResp, error)
+	GetKuva(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*KuvaResp, error)
+	GetVoidStorm(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*VoidStormResp, error)
+	GetDailyDeal(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DailyDealsResp, error)
 }
 
 type wfsClient struct {
@@ -67,8 +69,8 @@ func (c *wfsClient) GetCycles(ctx context.Context, in *emptypb.Empty, opts ...gr
 	return out, nil
 }
 
-func (c *wfsClient) GetAlerts(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *wfsClient) GetAlerts(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AlertsResp, error) {
+	out := new(AlertsResp)
 	err := c.cc.Invoke(ctx, Wfs_GetAlerts_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -76,8 +78,8 @@ func (c *wfsClient) GetAlerts(ctx context.Context, in *emptypb.Empty, opts ...gr
 	return out, nil
 }
 
-func (c *wfsClient) GetSorties(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *wfsClient) GetSorties(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SortiesResp, error) {
+	out := new(SortiesResp)
 	err := c.cc.Invoke(ctx, Wfs_GetSorties_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -85,8 +87,8 @@ func (c *wfsClient) GetSorties(ctx context.Context, in *emptypb.Empty, opts ...g
 	return out, nil
 }
 
-func (c *wfsClient) GetVoidTrader(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *wfsClient) GetVoidTrader(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*VoidTraderResp, error) {
+	out := new(VoidTraderResp)
 	err := c.cc.Invoke(ctx, Wfs_GetVoidTrader_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -94,8 +96,8 @@ func (c *wfsClient) GetVoidTrader(ctx context.Context, in *emptypb.Empty, opts .
 	return out, nil
 }
 
-func (c *wfsClient) GetWarframeMarket(ctx context.Context, in *WarframeMarketReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *wfsClient) GetWarframeMarket(ctx context.Context, in *WarframeMarketReq, opts ...grpc.CallOption) (*WarframeMarketResp, error) {
+	out := new(WarframeMarketResp)
 	err := c.cc.Invoke(ctx, Wfs_GetWarframeMarket_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -103,8 +105,8 @@ func (c *wfsClient) GetWarframeMarket(ctx context.Context, in *WarframeMarketReq
 	return out, nil
 }
 
-func (c *wfsClient) GetWarframeMarketRiven(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *wfsClient) GetWarframeMarketRiven(ctx context.Context, in *WarframeMarketRivenReq, opts ...grpc.CallOption) (*WarframeMarketRivenResp, error) {
+	out := new(WarframeMarketRivenResp)
 	err := c.cc.Invoke(ctx, Wfs_GetWarframeMarketRiven_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -112,8 +114,17 @@ func (c *wfsClient) GetWarframeMarketRiven(ctx context.Context, in *emptypb.Empt
 	return out, nil
 }
 
-func (c *wfsClient) GetInvasions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *wfsClient) GetWarframeMarketLich(ctx context.Context, in *WarframeMarketLichReq, opts ...grpc.CallOption) (*WarframeMarketLichResp, error) {
+	out := new(WarframeMarketLichResp)
+	err := c.cc.Invoke(ctx, Wfs_GetWarframeMarketLich_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *wfsClient) GetInvasions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InvasionsResp, error) {
+	out := new(InvasionsResp)
 	err := c.cc.Invoke(ctx, Wfs_GetInvasions_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -121,8 +132,8 @@ func (c *wfsClient) GetInvasions(ctx context.Context, in *emptypb.Empty, opts ..
 	return out, nil
 }
 
-func (c *wfsClient) GetNightwaves(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *wfsClient) GetNightwaves(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*NightwavesResp, error) {
+	out := new(NightwavesResp)
 	err := c.cc.Invoke(ctx, Wfs_GetNightwaves_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -130,8 +141,8 @@ func (c *wfsClient) GetNightwaves(ctx context.Context, in *emptypb.Empty, opts .
 	return out, nil
 }
 
-func (c *wfsClient) GetKuva(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *wfsClient) GetKuva(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*KuvaResp, error) {
+	out := new(KuvaResp)
 	err := c.cc.Invoke(ctx, Wfs_GetKuva_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -139,8 +150,8 @@ func (c *wfsClient) GetKuva(ctx context.Context, in *emptypb.Empty, opts ...grpc
 	return out, nil
 }
 
-func (c *wfsClient) GetVoidStorm(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *wfsClient) GetVoidStorm(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*VoidStormResp, error) {
+	out := new(VoidStormResp)
 	err := c.cc.Invoke(ctx, Wfs_GetVoidStorm_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -148,8 +159,8 @@ func (c *wfsClient) GetVoidStorm(ctx context.Context, in *emptypb.Empty, opts ..
 	return out, nil
 }
 
-func (c *wfsClient) GetDailyDeal(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *wfsClient) GetDailyDeal(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DailyDealsResp, error) {
+	out := new(DailyDealsResp)
 	err := c.cc.Invoke(ctx, Wfs_GetDailyDeal_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -162,16 +173,17 @@ func (c *wfsClient) GetDailyDeal(ctx context.Context, in *emptypb.Empty, opts ..
 // for forward compatibility
 type WfsServer interface {
 	GetCycles(context.Context, *emptypb.Empty) (*CyclesResp, error)
-	GetAlerts(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	GetSorties(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	GetVoidTrader(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	GetWarframeMarket(context.Context, *WarframeMarketReq) (*emptypb.Empty, error)
-	GetWarframeMarketRiven(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	GetInvasions(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	GetNightwaves(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	GetKuva(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	GetVoidStorm(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	GetDailyDeal(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	GetAlerts(context.Context, *emptypb.Empty) (*AlertsResp, error)
+	GetSorties(context.Context, *emptypb.Empty) (*SortiesResp, error)
+	GetVoidTrader(context.Context, *emptypb.Empty) (*VoidTraderResp, error)
+	GetWarframeMarket(context.Context, *WarframeMarketReq) (*WarframeMarketResp, error)
+	GetWarframeMarketRiven(context.Context, *WarframeMarketRivenReq) (*WarframeMarketRivenResp, error)
+	GetWarframeMarketLich(context.Context, *WarframeMarketLichReq) (*WarframeMarketLichResp, error)
+	GetInvasions(context.Context, *emptypb.Empty) (*InvasionsResp, error)
+	GetNightwaves(context.Context, *emptypb.Empty) (*NightwavesResp, error)
+	GetKuva(context.Context, *emptypb.Empty) (*KuvaResp, error)
+	GetVoidStorm(context.Context, *emptypb.Empty) (*VoidStormResp, error)
+	GetDailyDeal(context.Context, *emptypb.Empty) (*DailyDealsResp, error)
 	mustEmbedUnimplementedWfsServer()
 }
 
@@ -182,34 +194,37 @@ type UnimplementedWfsServer struct {
 func (UnimplementedWfsServer) GetCycles(context.Context, *emptypb.Empty) (*CyclesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCycles not implemented")
 }
-func (UnimplementedWfsServer) GetAlerts(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedWfsServer) GetAlerts(context.Context, *emptypb.Empty) (*AlertsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAlerts not implemented")
 }
-func (UnimplementedWfsServer) GetSorties(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedWfsServer) GetSorties(context.Context, *emptypb.Empty) (*SortiesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSorties not implemented")
 }
-func (UnimplementedWfsServer) GetVoidTrader(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedWfsServer) GetVoidTrader(context.Context, *emptypb.Empty) (*VoidTraderResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVoidTrader not implemented")
 }
-func (UnimplementedWfsServer) GetWarframeMarket(context.Context, *WarframeMarketReq) (*emptypb.Empty, error) {
+func (UnimplementedWfsServer) GetWarframeMarket(context.Context, *WarframeMarketReq) (*WarframeMarketResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetWarframeMarket not implemented")
 }
-func (UnimplementedWfsServer) GetWarframeMarketRiven(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedWfsServer) GetWarframeMarketRiven(context.Context, *WarframeMarketRivenReq) (*WarframeMarketRivenResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetWarframeMarketRiven not implemented")
 }
-func (UnimplementedWfsServer) GetInvasions(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedWfsServer) GetWarframeMarketLich(context.Context, *WarframeMarketLichReq) (*WarframeMarketLichResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWarframeMarketLich not implemented")
+}
+func (UnimplementedWfsServer) GetInvasions(context.Context, *emptypb.Empty) (*InvasionsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetInvasions not implemented")
 }
-func (UnimplementedWfsServer) GetNightwaves(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedWfsServer) GetNightwaves(context.Context, *emptypb.Empty) (*NightwavesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNightwaves not implemented")
 }
-func (UnimplementedWfsServer) GetKuva(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedWfsServer) GetKuva(context.Context, *emptypb.Empty) (*KuvaResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetKuva not implemented")
 }
-func (UnimplementedWfsServer) GetVoidStorm(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedWfsServer) GetVoidStorm(context.Context, *emptypb.Empty) (*VoidStormResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVoidStorm not implemented")
 }
-func (UnimplementedWfsServer) GetDailyDeal(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedWfsServer) GetDailyDeal(context.Context, *emptypb.Empty) (*DailyDealsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDailyDeal not implemented")
 }
 func (UnimplementedWfsServer) mustEmbedUnimplementedWfsServer() {}
@@ -316,7 +331,7 @@ func _Wfs_GetWarframeMarket_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _Wfs_GetWarframeMarketRiven_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(WarframeMarketRivenReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -328,7 +343,25 @@ func _Wfs_GetWarframeMarketRiven_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: Wfs_GetWarframeMarketRiven_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WfsServer).GetWarframeMarketRiven(ctx, req.(*emptypb.Empty))
+		return srv.(WfsServer).GetWarframeMarketRiven(ctx, req.(*WarframeMarketRivenReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wfs_GetWarframeMarketLich_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WarframeMarketLichReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WfsServer).GetWarframeMarketLich(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wfs_GetWarframeMarketLich_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WfsServer).GetWarframeMarketLich(ctx, req.(*WarframeMarketLichReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -453,6 +486,10 @@ var Wfs_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetWarframeMarketRiven",
 			Handler:    _Wfs_GetWarframeMarketRiven_Handler,
+		},
+		{
+			MethodName: "GetWarframeMarketLich",
+			Handler:    _Wfs_GetWarframeMarketLich_Handler,
 		},
 		{
 			MethodName: "GetInvasions",

@@ -42,6 +42,7 @@ func NewRegistry(c *conf.Registry) *etcdr.Registry {
 }
 
 func NewWftClient(r *etcdr.Registry) wftv1.WftClient {
+	// 先不搞连接池吧
 	conn, err := grpc.DialInsecure(
 		context.Background(),
 		grpc.WithEndpoint("discovery:///pipiao.wft.grpc"),
