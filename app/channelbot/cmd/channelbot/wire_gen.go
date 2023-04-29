@@ -9,6 +9,7 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/yguilai/pipiao-bot/app/channelbot/internal/biz/handler"
 	"github.com/yguilai/pipiao-bot/app/channelbot/internal/conf"
 	"github.com/yguilai/pipiao-bot/app/channelbot/internal/data"
 	"github.com/yguilai/pipiao-bot/app/channelbot/internal/server"
@@ -26,7 +27,11 @@ func wireApp(confData *conf.Data, logger log.Logger) (*kratos.App, func(), error
 	asynqServer := data.NewAsynqServer(confData)
 	channelBotService := service.NewChannelBotService()
 	serverAsynqServer := server.NewAsynqServer(asynqServer, confData, channelBotService, logger)
-	app := newApp(logger, serverAsynqServer)
+	client := data.NewAsynqClient(confData)
+	messageForwardService := service.NewMessageForwardService(logger, confData, client)
+	eventHandler := handler.NewEventHandler(messageForwardService)
+	botServer := server.NewBotServer(logger, eventHandler, confData)
+	app := newApp(logger, serverAsynqServer, botServer)
 	return app, func() {
 	}, nil
 }

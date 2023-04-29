@@ -4,7 +4,7 @@ import (
 	"github.com/tencent-connect/botgo/dto"
 	"github.com/tencent-connect/botgo/event"
 	"github.com/tencent-connect/botgo/websocket"
-	"github.com/yguilai/pipiao-bot/app/transport/internal/service"
+	"github.com/yguilai/pipiao-bot/app/channelbot/internal/service"
 	"sync"
 )
 

@@ -7,7 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/hibiken/asynq"
 	"github.com/tencent-connect/botgo/dto"
-	"github.com/yguilai/pipiao-bot/app/transport/internal/conf"
+	"github.com/yguilai/pipiao-bot/app/channelbot/internal/conf"
 	"github.com/yguilai/pipiao-bot/pkg/consts"
 )
 

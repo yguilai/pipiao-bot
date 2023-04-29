@@ -6,8 +6,8 @@ import (
 	"github.com/tencent-connect/botgo"
 	botlog "github.com/tencent-connect/botgo/log"
 	"github.com/tencent-connect/botgo/token"
-	"github.com/yguilai/pipiao-bot/app/transport/internal/conf"
-	hdl "github.com/yguilai/pipiao-bot/app/transport/internal/handler"
+	hdl "github.com/yguilai/pipiao-bot/app/channelbot/internal/biz/handler"
+	"github.com/yguilai/pipiao-bot/app/channelbot/internal/conf"
 	"github.com/yguilai/pipiao-bot/pkg/consts"
 	"github.com/yguilai/pipiao-bot/pkg/logadapter"
 )

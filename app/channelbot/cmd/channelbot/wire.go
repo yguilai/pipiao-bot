@@ -6,6 +6,7 @@
 package main
 
 import (
+	"github.com/yguilai/pipiao-bot/app/channelbot/internal/biz"
 	"github.com/yguilai/pipiao-bot/app/channelbot/internal/conf"
 	"github.com/yguilai/pipiao-bot/app/channelbot/internal/data"
 	"github.com/yguilai/pipiao-bot/app/channelbot/internal/server"
@@ -18,5 +19,5 @@ import (
 
 // wireApp init kratos application.
 func wireApp(*conf.Data, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, service.ProviderSet, newApp))
+	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
 }

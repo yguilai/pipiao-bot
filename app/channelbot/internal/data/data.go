@@ -12,6 +12,7 @@ import (
 var ProviderSet = wire.NewSet(
 	NewData,
 	NewAsynqServer,
+	NewAsynqClient,
 )
 
 // Data .
@@ -35,4 +36,11 @@ func NewAsynqServer(c *conf.Data) *asynq.Server {
 			c.Asynq.Queue: 1,
 		},
 	})
+}
+
+func NewAsynqClient(conf *conf.Data) *asynq.Client {
+	client := asynq.NewClient(asynq.RedisClientOpt{
+		Addr: conf.Asynq.Addr,
+	})
+	return client
 }
